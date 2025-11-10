@@ -28,7 +28,7 @@ function Login() {
             localStorage.setItem("token", data.token);
             alert("Login realizado com sucesso!")
 
-            window.location.href = "/schools";
+            window.location.href = "/Schools";
         } catch (err) {
             setErro(err.message);
         }

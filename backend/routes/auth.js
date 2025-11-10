@@ -1,10 +1,13 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 import { connection } from "../db.js";
 
+dotenv.config();
+
 const router = express.Router ();
-const SECRET = "meusegredoseguro"
+const SECRET = process.env.JWT_SECRET;
 
 router.post("/register", async (req, res) => {
     const { nome, email, senha } = req.body;
@@ -13,9 +16,12 @@ router.post("/register", async (req, res) => {
         return res.status(400).json({ erro: "Campos obrigatórios: nome, email, senha" });
     }
 
+    try {
+
     const hash = await bcrypt.hash(senha, 10);
 
     const sql = "INSERT INTO users (nome, email, senha) VALUES (?, ?, ?)";
+
     connection.query(sql, [nome, email, hash], (err) => {
         if (err) {
             if (err.code === "ER_DUP_ENTRY") {
@@ -26,6 +32,10 @@ router.post("/register", async (req, res) => {
 
         res.status(201).json({ mensagem: "Usuário registrado com sucesso!" });
     });
+
+    } catch (error) {
+        res.status(500).json({ erro: "Erro interno no servidor", detalhes: error});
+        }
 });
 
 router.post("/login", (req, res) => {

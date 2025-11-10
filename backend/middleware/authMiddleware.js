@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
-const SECRET = "meusegredoseguro";
+dotenv.config();
 
 export function verificarToken(req, res, next) {
     const authHeader = req.headers["authorization"];
