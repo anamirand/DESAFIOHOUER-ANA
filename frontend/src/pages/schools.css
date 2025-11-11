@@ -1,0 +1,128 @@
+.schools-page {
+  min-height: 100vh;
+  background-color: #f8fafc;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 0;
+  font-family: "Poppins", sans-serif;
+}
+
+.schools-container {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  width: 95%;
+  max-width: 1400px;
+  margin: auto;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #1f3646;
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.upload-section {
+  text-align: center;
+}
+
+.upload-section h2 {
+  margin-bottom: 15px;
+  color: #444;
+}
+
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.upload-form input[type="file"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.upload-form button {
+  background-color: #1f3646;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.3s;
+}
+
+.upload-form button:hover {
+  background-color: #324e62;
+}
+
+.error {
+  color: #c62828;
+  margin-top: 10px;
+}
+
+.success {
+  color: #2e7d32;
+  margin-top: 10px;
+}
+
+/* ====== ESTILO DA TABELA ====== */
+.table-section {
+  margin-top: 30px;
+  overflow-x: auto; /* rolagem horizontal se tiver muitas colunas */
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+}
+
+.table-section table {
+  width: 100%;
+  min-width: 800px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table-section th,
+.table-section td {
+  border: 1px solid #ddd;
+  padding: 12px 10px;
+  text-align: left;
+  white-space: nowrap; /* impede quebra de texto */
+}
+
+.table-section th {
+  background-color: #1f3646;
+  color: white;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.table-section tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.table-section tr:hover {
+  background-color: #eef3f8;
+}
+
+.table-section td {
+  color: #333;
+}
+
+
+.table-section::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-section::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
