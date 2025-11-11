@@ -7,7 +7,7 @@ import { connection } from "../db.js";
 dotenv.config();
 
 const router = express.Router ();
-const SECRET = process.env.JWT_SECRET;
+const SECRET = process.env.JWT_SECRET || "meusegredoseguro";
 
 router.post("/register", async (req, res) => {
     const { nome, email, senha } = req.body;
