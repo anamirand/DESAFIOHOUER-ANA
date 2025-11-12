@@ -87,7 +87,7 @@ Isso inicia:
 | Campo | Valor |
 |-------|--------|
 | Email | **admin@teste.com** |
-| Senha | **123456** |
+| Senha | **teste** |
 
 ---
 
