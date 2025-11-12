@@ -27,7 +27,8 @@ O projeto inclui **frontend (React)**, **backend (Node + Express + JWT)** e **ba
 
 ---
 
-## Configuração do Ambiente (sem Docker)
+### Clone o repositório
+git clone https://github.com/anamirand/DESAFIOHOUER-ANA.git
 
 ###  Configurando o backend
 
