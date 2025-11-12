@@ -1,18 +1,19 @@
 import mysql from "mysql2";
+import dotenv from "dotenv";
 
-const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: "root",
-    database: 'escolas_sp'
-})
+dotenv.config();
 
-connection.connect((err) => {
-    if (err) {
-        console.error('Erro ao conectar ao MySQL:', err);
-        return;
-    }
-    console.log('MySQL conectado com sucesso!');
+export const connection = mysql.createConnection({
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "",
+  database: process.env.DB_NAME || "escolas_db",
 });
 
-export { connection };
+connection.connect((err) => {
+  if (err) {
+    console.error("Erro ao conectar no MySQL:", err);
+    return;
+  }
+  console.log("Conectado ao MySQL!");
+});

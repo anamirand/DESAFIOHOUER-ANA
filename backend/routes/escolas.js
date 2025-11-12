@@ -15,7 +15,7 @@ const upload = multer({
 
 router.get("/", (req, res) => {
   const pagina = parseInt(req.query.pagina) || 1;
-  const limite = parseInt(req.query.limite) || 20;
+  const limite = parseInt(req.query.limite) || 100;
   const offset = (pagina - 1) * limite;
 
   const sql = `
@@ -27,9 +27,28 @@ router.get("/", (req, res) => {
 
   connection.query(sql, [limite, offset], (err, results) => {
     if (err) {
-      return res.status(500).json({ erro: "Erro ao listar escolas", detalhes: err });
+      return res.status(500).json({ erro: "Erro ao listar escolas" });
     }
-    res.json({ pagina, total: results.length, escolas: results });
+
+    connection.query("SELECT COUNT(*) AS total FROM schools", (countErr, countResult) => {
+      if (countErr) return res.status(500).json({ erro: "Erro ao contar registros" });
+
+      res.json({
+        pagina,
+        total: countResult[0].total,
+        escolas: results,
+      });
+    });
+  });
+});
+
+router.get("/:id", (req, res) => {
+  const { id } = req.params;
+  const sql = "SELECT * FROM schools WHERE id = ?";
+  connection.query(sql, [id], (err, results) => {
+    if (err) return res.status(500).json({ erro: err });
+    if (results.length === 0) return res.status(404).json({ erro: "Escola não encontrada" });
+    res.json(results[0]);
   });
 });
 
@@ -40,11 +59,10 @@ router.post("/upload", upload.single("arquivo"), async (req, res) => {
     await new Promise((resolve, reject) => {
       connection.query("TRUNCATE TABLE schools", (err) => {
         if (err) return reject(err);
-        console.log("Tabela 'schools' limpa antes da nova importação.");
         resolve();
       });
     });
-  } catch (err) {
+  } catch {
     return res.status(500).json({ erro: "Erro ao limpar tabela antes da importação." });
   }
 
@@ -89,7 +107,7 @@ router.post("/upload", upload.single("arquivo"), async (req, res) => {
     VICEDIRETORIA: "vicediretoria",
     SALA_PROF: "sala_prof",
     SECRETARIA: "secretaria",
-    SALA_COORD_PEDAG: "sala_coord_pedag"
+    SALA_COORD_PEDAG: "sala_coord_pedag",
   };
 
   fs.createReadStream(caminho)
@@ -100,7 +118,7 @@ router.post("/upload", upload.single("arquivo"), async (req, res) => {
       })
     )
     .on("data", (row) => {
-      const filteredRow = Object.fromEntries(Object.entries(row).filter(([k, v]) => k));
+      const filteredRow = Object.fromEntries(Object.entries(row).filter(([k]) => k));
       results.push(filteredRow);
     })
     .on("end", async () => {
@@ -110,14 +128,10 @@ router.post("/upload", upload.single("arquivo"), async (req, res) => {
 
       const colunas = Object.keys(results[0]);
       const sql = `INSERT INTO schools (${colunas.join(", ")}) VALUES ?`;
-
       const valores = results.map((linha) => colunas.map((coluna) => linha[coluna]));
 
       connection.query(sql, [valores], (err, result) => {
-        if (err) {
-          console.error("Erro ao inserir dados:", err.sqlMessage);
-          return res.status(500).json({ erro: "Erro ao importar CSV", detalhes: err.sqlMessage });
-        }
+        if (err) return res.status(500).json({ erro: "Erro ao importar CSV" });
         res.json({ mensagem: "Importação concluída com sucesso.", total: result.affectedRows });
       });
     })
@@ -126,21 +140,28 @@ router.post("/upload", upload.single("arquivo"), async (req, res) => {
     });
 });
 
+router.post("/", (req, res) => {
+  const novaEscola = req.body;
+  const sql = "INSERT INTO schools (codesc, nomesc, mun, tipoesc_desc) VALUES (?, ?, ?, ?)";
+  connection.query(
+    sql,
+    [novaEscola.codesc, novaEscola.nomesc, novaEscola.mun, novaEscola.tipoesc_desc],
+    (err, result) => {
+      if (err) return res.status(500).json({ erro: "Erro ao criar escola" });
+      res.json({ mensagem: "Escola criada com sucesso", id: result.insertId });
+    }
+  );
+});
+
 router.put("/:id", (req, res) => {
   const id = req.params.id;
   const campos = req.body;
   const chaves = Object.keys(campos);
   const valores = Object.values(campos);
-
-  const sql = `
-  SELECT *
-  FROM schools
-  ORDER BY id ASC
-  LIMIT ? OFFSET ?
-`;
+  const sql = `UPDATE schools SET ${chaves.map((c) => `${c} = ?`).join(", ")} WHERE id = ?`;
 
   connection.query(sql, [...valores, id], (err, result) => {
-    if (err) return res.status(500).json({ erro: "Erro ao atualizar escola", detalhes: err });
+    if (err) return res.status(500).json({ erro: "Erro ao atualizar escola" });
     if (result.affectedRows === 0) return res.status(404).json({ mensagem: "Escola não encontrada" });
     res.json({ mensagem: "Escola atualizada com sucesso." });
   });
@@ -151,7 +172,7 @@ router.delete("/:id", (req, res) => {
   const sql = `DELETE FROM schools WHERE id = ?`;
 
   connection.query(sql, [id], (err, result) => {
-    if (err) return res.status(500).json({ erro: "Erro ao deletar escola", detalhes: err });
+    if (err) return res.status(500).json({ erro: "Erro ao deletar escola" });
     if (result.affectedRows === 0) return res.status(404).json({ mensagem: "Escola não encontrada" });
     res.json({ mensagem: "Escola deletada com sucesso." });
   });
