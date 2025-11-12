@@ -1,4 +1,4 @@
-# 🏫 Teste Escolas SP
+# TESTE PRÁTICO ESCOLAS
 
 Sistema completo para gerenciamento de escolas, com autenticação, upload de CSV, edição e visualização de informações detalhadas.  
 O projeto inclui **frontend (React)**, **backend (Node + Express + JWT)** e **banco MySQL** totalmente integrado via **Docker Compose**.
@@ -27,9 +27,9 @@ O projeto inclui **frontend (React)**, **backend (Node + Express + JWT)** e **ba
 
 ---
 
-## ⚙️ Configuração do Ambiente (sem Docker)
+## Configuração do Ambiente (sem Docker)
 
-### 🔧 Configurando o backend
+###  Configurando o backend
 
 ```bash
 cd backend
